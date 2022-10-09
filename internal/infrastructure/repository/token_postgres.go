@@ -19,7 +19,7 @@ func NewTokenRepo(db *gorm.DB) *TokenRepo {
 }
 
 func (rep *TokenRepo) Create(token *entity.Token) error {
-	if result := rep.db.FirstOrCreate(token); result.Error != nil && result.RowsAffected != 1 {
+	if result := rep.db.Where("tg_id = ?", token.TGID).FirstOrCreate(token); result.Error != nil && result.RowsAffected != 1 {
 		return fmt.Errorf("error creating token - %w", result.Error)
 	}
 	return nil

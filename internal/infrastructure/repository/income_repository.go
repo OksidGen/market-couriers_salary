@@ -19,7 +19,8 @@ func NewIncomeRepo(db *gorm.DB) *IncomeRepo {
 }
 
 func (rep *IncomeRepo) Create(income *entity.Income) error {
-	if result := rep.db.FirstOrCreate(income); result.Error != nil && result.RowsAffected != 1 {
+	start, end := rangeWeek("now")
+	if result := rep.db.Where("created_at BETWEEN ? AND ?", start, end).FirstOrCreate(income); result.Error != nil && result.RowsAffected != 1 {
 		return fmt.Errorf("error creating income - %w", result.Error)
 	}
 	return nil
