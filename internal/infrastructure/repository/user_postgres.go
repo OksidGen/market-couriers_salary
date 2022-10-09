@@ -25,9 +25,9 @@ func (rep *UserRepo) Create(user *entity.User) error {
 	return nil
 }
 
-func (rep *UserRepo) Check(id int64) (bool, error) {
-	user := entity.User{TGID: id}
-	if result := rep.db.First(&user); result.Error != nil {
+func (rep *UserRepo) Check(tgid int64) (bool, error) {
+	user := entity.User{}
+	if result := rep.db.Where("tg_id = ?", tgid).First(&user); result.Error != nil {
 		if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return false, fmt.Errorf("error checking user: %w", result.Error)
 		}

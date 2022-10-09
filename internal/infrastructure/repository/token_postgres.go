@@ -25,8 +25,8 @@ func (rep *TokenRepo) Create(token *entity.Token) error {
 	return nil
 }
 func (rep *TokenRepo) Find(tgid int64) (string, error) {
-	token := entity.Token{TGID: tgid}
-	if res := rep.db.First(&token); res.Error != nil {
+	token := entity.Token{}
+	if res := rep.db.Where("tg_id = ?", tgid).First(&token); res.Error != nil {
 		if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 			return "", fmt.Errorf("error find token: %w", res.Error)
 		}
