@@ -175,7 +175,7 @@ func (uc *CourierUseCase) CaseCalculate(msg map[string]interface{}) {
 		msg["text"] = errorMessage
 		return
 	}
-	msg["text"] = income.ToTableStirng()
+	msg["text"] = fmt.Sprintf("```%v```", income.ToTableStirng())
 	msg["parse_mode"] = "MarkdownV2"
 }
 
