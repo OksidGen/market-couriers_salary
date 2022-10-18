@@ -19,7 +19,7 @@ func NewIncomeRepo(db *gorm.DB) *IncomeRepo {
 }
 
 func (rep *IncomeRepo) Create(income *entity.Income) error {
-	start, end := rangeWeek("now")
+	start, end := rangeWeek("now",time.Now())
 	if result := rep.db.Where("tg_id = ? AND created_at BETWEEN ? AND ?", income.TGID, start, end).FirstOrCreate(income); result.Error != nil && result.RowsAffected != 1 {
 		return fmt.Errorf("error creating income - %w", result.Error)
 	}
@@ -28,7 +28,7 @@ func (rep *IncomeRepo) Create(income *entity.Income) error {
 
 func (rep *IncomeRepo) Select(tgid int64, week string) []entity.Income {
 	incomes := []entity.Income{}
-	startWeek, endWeek := rangeWeek(week)
+	startWeek, endWeek := rangeWeek(week, time.Now())
 	res := rep.db.Where("tg_id = ? AND created_at BETWEEN ? AND ?", tgid, startWeek, endWeek).Find(&incomes)
 	if res.Error != nil {
 		fmt.Printf("error select income: %v", res.Error)
@@ -37,10 +37,10 @@ func (rep *IncomeRepo) Select(tgid int64, week string) []entity.Income {
 	return incomes
 }
 
-func rangeWeek(week string) (time.Time, time.Time) {
-	y, m, d := time.Now().Date()
-	weekday := int(time.Now().Weekday()) - 1
-	if weekday < 0 {
+func rangeWeek(week string, date time.Time) (time.Time, time.Time) {
+	y, m, d := date.Date()
+	weekday := int(date.Weekday())
+	if weekday == 0 {
 		weekday = 7
 	}
 	startWeek := time.Date(y, m, d, 0, 0, 0, 0, time.UTC)
