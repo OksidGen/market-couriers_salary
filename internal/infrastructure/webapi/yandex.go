@@ -17,8 +17,8 @@ import (
 
 type (
 	task struct {
-		// RoutePointID int `json:"routePointId"`
-		TaskID int `json:"taskId"`
+		RoutePointID int `json:"routePointId"`
+		// TaskID int `json:"taskId"`
 		// Type          string `json:"type"`
 		OrderType  string `json:"orderType"`
 		TaskStatus string `json:"taskStatus"`
@@ -47,9 +47,10 @@ type (
 )
 
 const (
-	priceTask    = 90
-	priceMulti   = 60
-	pricePackage = 5
+	priceTask     = 90
+	priceMulti    = 60
+	pricePackage  = 5
+	minimumIncome = 3500
 
 	yandexAuth = "https://oauth.yandex.ru"
 )
@@ -114,8 +115,8 @@ func (api *YandexWebApi) CalculateIncome(token string) map[string]int {
 		}
 		out["income"] += priceTask
 	}
-	if out["income"] < 2200 {
-		out["income"] = 2200
+	if out["income"] < minimumIncome {
+		out["income"] = minimumIncome
 	}
 	return out
 }
@@ -188,7 +189,7 @@ func (tm *taskMassive) brushMassive() {
 	var temp []task
 	for _, oneTask := range tm.Tasks {
 		if oneTask.TaskStatus == "DELIVERED" {
-			i := slices.IndexFunc(temp, func(t task) bool { return t.TaskID == oneTask.TaskID })
+			i := slices.IndexFunc(temp, func(t task) bool { return t.RoutePointID == oneTask.RoutePointID })
 			if i != -1 {
 				temp[i].PlaceCount += oneTask.PlaceCount
 			} else {
