@@ -19,3 +19,6 @@
 
 # Ignore the vscode files
 .vscode/
+
+# Ignore the idea files
+.idea/
